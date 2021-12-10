@@ -19,6 +19,7 @@ section {
 body { 
   position: relative; /* we need this for the scrollspy */ 
   font-size: 18px;
+  background-color: #141414;
 }
 
 a { color: #3CC; }
