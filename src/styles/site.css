@@ -216,7 +216,7 @@ h2 {
 .post-date { color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .post { line-height: 1.75; overflow-wrap: break-word; word-wrap: break-word; }
 .post h1 { font-size: clamp(1.75rem, 5vw, 2.8rem); line-height: 1.15; }
-.post a { color: var(--accent); word-break: break-all; }
+.post a:not(.button) { color: var(--accent); word-break: break-all; }
 .post pre { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 18px; overflow-x: auto; max-width: 100%; margin: 24px 0; }
 .post code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; background: rgba(255, 255, 255, 0.06); padding: 3px 6px; border-radius: 4px; overflow-wrap: break-word; word-break: break-word; }
 .post pre code { background: none; padding: 0; border-radius: 0; overflow-wrap: normal; word-break: normal; }
@@ -245,6 +245,13 @@ h2 {
   .footer { padding: 38px 18px; }
   .footer-tagline { font-size: min(12vw, 2.6rem); letter-spacing: .04em; }
   .footer .button { max-width: 100%; }
+}
+
+.back-to-top {
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.back-to-top:hover {
+  transform: translateY(-3px);
 }
 
 @media (prefers-reduced-motion: reduce) {
