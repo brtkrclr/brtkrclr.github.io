@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/site.css';
+import { marked } from 'marked';
+
+export async function getStaticPaths() {
+  const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
+  return Object.entries(modules).map(([path, mod]) => ({
+    params: { slug: path.split('/').pop().replace(/\.md$/, '') },
+    props: { post: mod }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = post;
+
+const gitlabURL = post.frontmatter.gitlabURL || post.frontmatter.gitlabUrl || post.frontmatter.remoteURL || post.frontmatter.remoteUrl;
+
+function getRawUrl(url) {
+  if (!url) return null;
+  // Convert GitHub web links to raw links
+  if (url.includes('github.com') && url.includes('/blob/')) {
+    return url
+      .replace('github.com', 'raw.githubusercontent.com')
+      .replace('/blob/', '/');
+  }
+  // Convert GitLab web links to raw links
+  if (url.includes('gitlab.com') && url.includes('/-/blob/')) {
+    return url.replace('/-/blob/', '/-/raw/');
+  }
+  return url;
+}
+
+let remoteContentHtml = '';
+let fetchError = null;
+
+if (gitlabURL) {
+  const rawUrl = getRawUrl(gitlabURL);
+  try {
+    const response = await fetch(rawUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const markdownText = await response.text();
+    remoteContentHtml = await marked.parse(markdownText);
+  } catch (err) {
+    console.error(`Failed to fetch markdown from ${rawUrl}:`, err);
+    fetchError = `Could not load remote content. Error: ${err.message}`;
+  }
+}
+const formattedDate = post.frontmatter.date
+  ? new Date(post.frontmatter.date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC'
+    })
+  : '';
+---
+
+<BaseLayout title={`${post.frontmatter.title} | bræfn`}>
+  <main class="blog-page">
+    <header class="blog-header">
+      <a class="button" href="/blog">All posts</a>
+      <a class="button" href="/">Home</a>
+    </header>
+    <article class="post">
+      <div class="post-date">{formattedDate}</div>
+      <h1>{post.frontmatter.title}</h1>
+      <div class="line"></div>
+      {gitlabURL ? (
+        fetchError ? (
+          <p style="color: var(--accent); font-weight: bold;">{fetchError}</p>
+        ) : (
+          <div set:html={remoteContentHtml} />
+        )
+      ) : (
+        <Content />
+      )}
+    </article>
+  </main>
+</BaseLayout>

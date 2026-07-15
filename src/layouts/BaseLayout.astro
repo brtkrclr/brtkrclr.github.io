@@ -1,0 +1,46 @@
+---
+const { title = 'bræfn' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Personal site of bræfn" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <script is:inline>
+      try {
+        const savedTheme = localStorage.getItem('theme');
+        const theme = savedTheme || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.dataset.theme = theme;
+      } catch {
+        document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      }
+    </script>
+  </head>
+  <body>
+    <button class="theme-toggle" type="button" aria-label="Switch color theme" aria-pressed="false">
+      <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3V1m0 22v-2m9-9h2M1 12h2m15.36 6.36 1.41 1.41M4.22 4.22l1.41 1.41m12.73 0 1.41-1.41M4.22 19.78l1.41-1.41M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" /></svg>
+      <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.25 14.1A8.25 8.25 0 0 1 9.9 3.75 8.25 8.25 0 1 0 20.25 14.1Z" /></svg>
+    </button>
+    <slot />
+    <script is:inline>
+      const toggle = document.querySelector('.theme-toggle');
+      const updateToggle = () => {
+        const isLight = document.documentElement.dataset.theme === 'light';
+        toggle.setAttribute('aria-pressed', String(isLight));
+        toggle.setAttribute('aria-label', `Switch to ${isLight ? 'dark' : 'light'} theme`);
+      };
+      updateToggle();
+      toggle.addEventListener('click', () => {
+        document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+        try { localStorage.setItem('theme', document.documentElement.dataset.theme); } catch { /* Storage can be disabled in private browser modes. */ }
+        updateToggle();
+      });
+    </script>
+  </body>
+</html>

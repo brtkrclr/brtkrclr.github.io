@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/site.css';
+
+const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
+const posts = Object.entries(modules)
+  .map(([path, mod]) => {
+    const rawDate = mod.frontmatter?.date ?? '';
+    const formattedDate = rawDate
+      ? new Date(rawDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          timeZone: 'UTC'
+        })
+      : '';
+    return {
+      slug: path.split('/').pop().replace(/\.md$/, ''),
+      title: mod.frontmatter?.title ?? 'Untitled post',
+      description: mod.frontmatter?.description ?? '',
+      date: formattedDate,
+      rawDate
+    };
+  })
+  .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+---
+
+<BaseLayout title="Blog | bræfn">
+  <main class="blog-page">
+    <header class="blog-header">
+      <h1 class="hero-wordmark">Blog</h1>
+      <a class="button" href="/">Home</a>
+    </header>
+    <section class="post-list" aria-label="Blog posts">
+      {posts.map((post) => (
+        <article class="post-card">
+          <div class="post-date">{post.date}</div>
+          <h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2>
+          <p>{post.description}</p>
+        </article>
+      ))}
+    </section>
+  </main>
+</BaseLayout>

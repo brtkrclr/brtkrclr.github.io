@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SocialIcon from '../components/SocialIcon.astro';
+import '../styles/site.css';
+
+const links = [
+  ['GitHub', 'https://github.com/brtkrclr'],
+  ['X', 'https://www.twitter.com/mangomuiddin'],
+  ['Email', 'mailto:v3rti60@proton.me']
+];
+
+// Change this sentence whenever you want to update the terminal line on the homepage.
+const terminalText = 'hello friend, if you want to reach me you know where to find me.';
+---
+
+<BaseLayout>
+  <main>
+    <section class="hero" id="home" aria-label="bræfn links">
+      <div class="hero-content">
+        <h1 class="hero-wordmark"><span>H3LLO, FR13ND.</span></h1>
+        <p class="bash-line" aria-label={terminalText}>
+          <span class="bash-prompt">bræfn@oxa:~$</span>
+          <span class="bash-output" data-terminal-text={terminalText} aria-hidden="true"></span><span class="bash-cursor" aria-hidden="true"></span>
+        </p>
+        <nav class="social-links" aria-label="Social links">
+          {links.map(([name, href]) => <SocialIcon name={name} href={href} />)}
+        </nav>
+        <a class="button" href="/blog">Read my blog</a>
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="about-shell">
+        <div class="section-heading">
+          <p class="section-kicker">about me</p>
+          <h2>simplicity is the ultimate sophistication.</h2>
+          <p class="about-summary">
+            I work on software, platform, and DevOps systems with a bias toward reliability,
+            clarity, and automation that actually helps people ship.
+          </p>
+        </div>
+
+        <div class="about-grid">
+          <article class="about-panel about-panel-primary">
+            <p class="panel-label">What I do</p>
+            <p class="panel-copy">
+              Try to do what I love to do.
+            </p>
+            <br>
+            <p class="panel-label">Who am I?</p>
+            <ul class="skill-list">
+              <li>Software Engineer</li>
+              <li>Musician</li>
+              <li>Origami Artist</li>
+              <li>Magician</li>
+              <li>
+                <span class="bash-output" data-terminal-text="Loading..." aria-hidden="true"></span>
+                <span class="bash-cursor" aria-hidden="true"></span>
+              </li>
+            </ul>
+           
+          </article>
+
+          <article class="about-panel about-panel-primary">
+            <p class="panel-label">PROJECTS</p>  
+            <div class="project-entry" style="margin-bottom: 24px;">
+              <a class="panel-link" href="https://mystral.world" target="_blank" rel="noopener noreferrer" 
+                style="display: inline-block; margin-bottom: 6px; text-decoration: underline; font-weight: bold; transition: opacity 0.2s;"
+                onmouseover="this.style.opacity='0.8'" 
+                onmouseout="this.style.opacity='1'">
+                mystral.world ↗
+              </a>
+              <p class="panel-copy" style="margin-top: 4px;">
+                Tarot readings, Coffee Cup readings, Dream interpretation, and Astrology insights.
+              </p>
+               <a class="panel-link" href="/blog">Read my blog</a>
+            </div>
+        </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+  <a class="button" href="#home">Back To Top</a>
+    <p class="footer-tagline">wake up bero</p>
+    
+    <ul class="footer-social" aria-label="Social links">
+      {links.map(([name, href]) => <li><SocialIcon name={name} href={href} /></li>)}
+    </ul>
+  </footer>
+  <script is:inline>
+    const outputs = document.querySelectorAll('.bash-output');
+
+    outputs.forEach((output) => {
+      const text = output.dataset.terminalText ?? '';
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        output.textContent = text;
+        return;
+      }
+
+      let character = 0;
+      const type = () => {
+        output.textContent = text.slice(0, character);
+        character += 1;
+        if (character <= text.length) window.setTimeout(type, 42);
+      };
+
+      type();
+    });
+  </script>
+</BaseLayout>
