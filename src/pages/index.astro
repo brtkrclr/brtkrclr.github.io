@@ -99,6 +99,9 @@ const terminalText = 'hello friend, if you want to reach me you know where to fi
     <ul class="footer-social" aria-label="Social links">
       {links.map(([name, href]) => <li><SocialIcon name={name} href={href} /></li>)}
     </ul>
+    <p style="margin-top: 28px; font-size: 0.75rem; opacity: 0.55; letter-spacing: 0.05em;">
+      &copy; {new Date().getFullYear()} bræfn. All rights reserved.
+    </p>
   </footer>
   <script is:inline>
     const outputs = document.querySelectorAll('.bash-output');
