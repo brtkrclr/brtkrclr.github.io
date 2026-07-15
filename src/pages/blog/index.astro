@@ -18,11 +18,14 @@ const posts = Object.entries(modules)
       slug: path.split('/').pop().replace(/\.md$/, ''),
       title: mod.frontmatter?.title ?? 'Untitled post',
       description: mod.frontmatter?.description ?? '',
+      tags: mod.frontmatter?.tags ?? [],
+      draft: mod.frontmatter?.draft ?? false,
       date: formattedDate,
       rawDate
     };
   })
-  .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+  .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))
+  .filter((post) => !post.draft);
 ---
 
 <BaseLayout title="Blog | bræfn">
@@ -31,14 +34,54 @@ const posts = Object.entries(modules)
       <h1 class="hero-wordmark">Blog</h1>
       <a class="button" href="/">Home</a>
     </header>
-    <section class="post-list" aria-label="Blog posts">
+    <div id="tag-filter-bar" style="display:none; margin-bottom: 24px; align-items: center; gap: 10px;">
+      <span style="font-size:.8rem; opacity:.6; text-transform:uppercase; letter-spacing:.08em;">Filtered by:</span>
+      <span id="active-tag-pill" class="tag"></span>
+      <a href="/blog" class="button" style="font-size:10px; padding: 8px 16px;">Clear</a>
+    </div>
+    <section class="post-list" aria-label="Blog posts" id="post-list">
       {posts.map((post) => (
-        <article class="post-card">
+        <article class="post-card" data-tags={JSON.stringify(post.tags)}>
           <div class="post-date">{post.date}</div>
           <h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2>
-          <p>{post.description}</p>
+          {post.description && <p>{post.description}</p>}
+          {post.tags.length > 0 && (
+            <div class="post-tags">
+              {post.tags.map((tag) => (
+                <a class="tag" href={`/blog?tag=${encodeURIComponent(tag)}`}>{tag}</a>
+              ))}
+            </div>
+          )}
         </article>
       ))}
     </section>
+    <p id="no-results" style="display:none; opacity:.6;">No posts found for this tag.</p>
   </main>
 </BaseLayout>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const activeTag = params.get('tag');
+
+  if (activeTag) {
+    const bar = document.getElementById('tag-filter-bar');
+    const pill = document.getElementById('active-tag-pill');
+    bar.style.display = 'flex';
+    pill.textContent = activeTag;
+
+    const cards = document.querySelectorAll('#post-list .post-card');
+    let visible = 0;
+    cards.forEach((card) => {
+      const tags = JSON.parse(card.dataset.tags || '[]');
+      if (tags.includes(activeTag)) {
+        visible++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (visible === 0) {
+      document.getElementById('no-results').style.display = 'block';
+    }
+  }
+</script>

@@ -222,6 +222,11 @@ h2 {
 .post pre code { background: none; padding: 0; border-radius: 0; overflow-wrap: normal; word-break: normal; }
 :root[data-theme='light'] .post pre { background: rgba(0, 0, 0, 0.03); border-color: rgba(0, 0, 0, 0.08); }
 :root[data-theme='light'] .post code { background: rgba(0, 0, 0, 0.05); }
+.post-description { color: var(--text); font-size: 1.05rem; line-height: 1.65; margin: 10px 0 0; opacity: .72; }
+.post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+.tag { background: rgba(248, 3, 0, .12); border: 1px solid rgba(248, 3, 0, .35); border-radius: 90px; color: var(--accent); cursor: pointer; font-size: .72rem; font-weight: 700; letter-spacing: .08em; padding: 4px 12px; text-decoration: none; text-transform: uppercase; transition: background .18s ease, color .18s ease; }
+.tag:hover { background: var(--accent); color: #fff; }
+:root[data-theme='light'] .tag { background: rgba(248, 3, 0, .08); border-color: rgba(248, 3, 0, .28); }
 
 .theme-toggle { align-items: center; background: var(--surface); border: 1px solid currentColor; border-radius: 50%; color: var(--text); cursor: pointer; display: flex; height: 44px; justify-content: center; padding: 0; position: fixed; right: max(16px, env(safe-area-inset-right)); top: max(16px, env(safe-area-inset-top)); touch-action: manipulation; width: 44px; z-index: 10; }
 .theme-toggle:hover { background: var(--accent); color: #fff; }

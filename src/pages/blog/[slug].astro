@@ -5,10 +5,12 @@ import { marked } from 'marked';
 
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
-  return Object.entries(modules).map(([path, mod]) => ({
-    params: { slug: path.split('/').pop().replace(/\.md$/, '') },
-    props: { post: mod }
-  }));
+  return Object.entries(modules)
+    .filter(([, mod]) => !mod.frontmatter?.draft)
+    .map(([path, mod]) => ({
+      params: { slug: path.split('/').pop().replace(/\.md$/, '') },
+      props: { post: mod }
+    }));
 }
 
 const { post } = Astro.props;
@@ -67,15 +69,24 @@ const formattedDate = post.frontmatter.date
     <article class="post">
       <div class="post-date">{formattedDate}</div>
       <h1>{post.frontmatter.title}</h1>
+      {post.frontmatter.description && (
+        <p class="post-description">{post.frontmatter.description}</p>
+      )}
+      {post.frontmatter.tags?.length > 0 && (
+        <div class="post-tags">
+          {post.frontmatter.tags.map((tag) => (
+            <a class="tag" href={`/blog?tag=${encodeURIComponent(tag)}`}>{tag}</a>
+          ))}
+        </div>
+      )}
       <div class="line"></div>
-      {gitlabURL ? (
+      <Content />
+      {gitlabURL && (
         fetchError ? (
           <p style="color: var(--accent); font-weight: bold;">{fetchError}</p>
         ) : (
           <div set:html={remoteContentHtml} />
         )
-      ) : (
-        <Content />
       )}
       <div style="margin-top: 60px; display: flex; justify-content: center;">
         <a class="button back-to-top" href="#top">Back To Top</a>
